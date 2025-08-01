@@ -1,0 +1,98 @@
+[package]
+name = "hft_system"
+version = "1.0.0"
+edition = "2021"
+authors = ["HFT Team <team@hft.com>"]
+description = "高性能虚拟货币高频交易系统"
+license = "MIT"
+repository = "https://github.com/hft-team/hft-system"
+keywords = ["trading", "cryptocurrency", "high-frequency", "rust"]
+categories = ["finance", "api-bindings"]
+
+[lib]
+name = "hft_system"
+path = "src/lib.rs"
+
+[[bin]]
+name = "hft_system"
+path = "src/main.rs"
+
+[dependencies]
+# 异步运行时
+tokio = { version = "1.0", features = ["full"] }
+async-trait = "0.1"
+futures = "0.3"
+
+# 序列化
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+
+# 数值计算
+rust_decimal = { version = "1.0", features = ["serde-with-str"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+
+# 时间处理
+chrono = { version = "0.4", features = ["serde"] }
+
+# 网络请求
+reqwest = { version = "0.11", features = ["json", "rustls-tls"] }
+tokio-tungstenite = { version = "0.20", features = ["rustls-tls-webpki-roots"] }
+
+# 加密
+hmac = "0.12"
+sha2 = "0.10"
+hex = "0.4"
+
+# 数据库
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "decimal"] }
+redis = { version = "0.23", features = ["tokio-comp"] }
+
+# 日志
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+log = "0.4"
+
+# 错误处理
+thiserror = "1.0"
+anyhow = "1.0"
+
+# 配置管理
+config = "0.13"
+
+# 并发
+parking_lot = "0.12"
+crossbeam = "0.8"
+
+# 工具
+once_cell = "1.0"
+
+[dev-dependencies]
+tokio-test = "0.4"
+mockall = "0.11"
+criterion = "0.5"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[[bench]]
+name = "order_processing"
+harness = false
+
+[[bench]]
+name = "market_data"
+harness = false
+
+[features]
+default = ["postgres", "redis"]
+postgres = ["sqlx/postgres"]
+redis = ["dep:redis"]
+testnet = []
+
